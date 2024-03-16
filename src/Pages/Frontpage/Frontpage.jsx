@@ -63,7 +63,7 @@ function Frontpage() {
     for (const tld of tlds) {
       
       try {
-        const response = await axios.get(`http://domain.api.kode4.dk/check?domain=${data.domain.split(".")[1] ? data.domain.substring(0, data.domain.indexOf('.')) + tld : data.domain + tld}`);
+        const response = await axios.get(`https://domain.api.kode4.dk/check?domain=${data.domain.split(".")[1] ? data.domain.substring(0, data.domain.indexOf('.')) + tld : data.domain + tld}`);
         console.log((data.domain).split(".")[1]);
         results[tld] = response.data.available;
       } catch (error) {
