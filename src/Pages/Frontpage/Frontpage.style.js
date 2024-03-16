@@ -63,6 +63,8 @@ h1{
 }    
 
 .result{
+height: 50vh;
+overflow: scroll;
     text-align: center;
     h1{
         margin: 2vh 0;

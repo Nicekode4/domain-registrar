@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { FrontpageStyle } from './Frontpage.style';
@@ -37,6 +37,7 @@ function Frontpage() {
     '.wtf',
     '.cool'
   ];
+  
   useEffect(() => {
     const timer = setTimeout(() => {
       if (count < slides.length - 1) {
@@ -53,43 +54,8 @@ function Frontpage() {
   useEffect(() => {
 
   }, [searchInProgress]);
-function progressTimer(params) {
-  setProgress(0)
-  let count = 0
 
-let timeout1 = setTimeout(() => {
-  count = count + 1
-  setProgress(count)
-}, Math.floor(Math.random() * (1000 - 250) + 250));
-
-let timeout2 = setTimeout(() => {
-  count = count + 1
-  setProgress(count)
-}, Math.floor(Math.random() * (2000 - 250) + 250));
-
-let timeout3 = setTimeout(() => {
-  count = count + 1
-  setProgress(count)
-}, Math.floor(Math.random() * (3000 - 250) + 250));
-
-let timeout4 = setTimeout(() => {
-  count = count + 1
-  setProgress(count)
-}, Math.floor(Math.random() * (4000 - 250) + 250));
-
-let timeout5 = setTimeout(() => {
-  count = count + 1
-  setProgress(count)
-  setSearchInProgress(false)
-  clearTimeout(timeout1)
-  clearTimeout(timeout2)
-  clearTimeout(timeout3)
-  clearTimeout(timeout4)
-  clearTimeout(timeout5)
-}, 4500);
-}
   const onSubmit = async (data) => {
-    progressTimer()
     setDomainResults({})
     setSearchInProgress(true)
     setInput(data.domain)
@@ -97,17 +63,17 @@ let timeout5 = setTimeout(() => {
     for (const tld of tlds) {
       
       try {
-        const response = await axios.get(`http://domain.api.kode4.dk/ping?domain=${data.domain.split(".")[1] ? data.domain.substring(0, data.domain.indexOf('.')) + tld : data.domain + tld}`);
+        const response = await axios.get(`http://domain.api.kode4.dk/check?domain=${data.domain.split(".")[1] ? data.domain.substring(0, data.domain.indexOf('.')) + tld : data.domain + tld}`);
         console.log((data.domain).split(".")[1]);
-        results[tld] = response.data.reachable;
+        results[tld] = response.data.available;
       } catch (error) {
         console.error(`Error fetching data for ${tld}:`, error);
-        results[tld] = false; // Assuming the domain is not reachable if there's an error
+        results[tld] = false; // Assuming the domain is not available if there's an error
       }
     }
     console.log(results);
     setDomainResults(results);
-
+    setSearchInProgress(false)
 
   };
 
@@ -124,25 +90,28 @@ let timeout5 = setTimeout(() => {
           <button type="submit">🔍</button>
         </form>
         <ul>
-          <li>.dk</li>
-          <li>.eu</li>
-          <li>.com</li>
-          <li>.net</li>
-          <li>.cool</li>
-          <li>.wtf</li>
+          <li style={{color: "red"}}>.dk</li>
+          <li style={{color: "blue"}}>.eu</li>
+          <li style={{color: "orange"}}>.com</li>
+          <li style={{color: "purple"}}>.net</li>
+          <li style={{color: "black"}}>.cool</li>
+          <li style={{color: "green"}}>.wtf</li>
         </ul>
         
       </section>
       <hr />
-      {!searchInProgress ? <section className='result'>
-          {Object.entries(domainResults).map(([tld, reachable], index) => (
-            <h1 key={index}>{input.split(".")[1] ? input.substring(0, input.indexOf('.')) + tld : input + tld} - {reachable ? 'Optaget' : 'Ledigt'}</h1>
+      {
+        <section className='result'>
+          { Object.entries(domainResults).map(([tld, available], index) => (
+            <h1 key={index}>{input.split(".")[1] ? input.substring(0, input.indexOf('.')) + tld : input + tld} - {!available ? 'Optaget' : 'Ledigt'}</h1>
             
           ))}
           <hr />
-        </section> : <p>{`Finder ${progress} ud af ${tlds.length}`}</p> }
+        </section>
+        }
     </FrontpageStyle>
   );
 }
 
 export default Frontpage;
+
